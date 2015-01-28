@@ -38,7 +38,15 @@ class MotionDetector {
     PSMoveTracker tracker;
     MotionDetect detect;
     Timer timer;
+    float time = 0;
     
+    Mat imgDraw_;
+    enum {
+        WAITING,
+        START_DRAWING,
+        DRAWING,
+        FINISH
+    } state = WAITING;
 public:
     MotionDetector() {
 #if DO_PAIRING
@@ -58,6 +66,11 @@ public:
         objectWid_ = 0; objectHei_ = 0;
     }
     
+    void init()
+    {
+        detect.init(640, 480);
+    }
+    
     void setupEye(PSEyeCapture& eye)
     {
         eye.driver()->setGain(10);
@@ -68,12 +81,14 @@ public:
     }
     
     bool MotionDetecting() {
+        timer.duration_sec();
         while(1) {
             Mat img_;
-            Mat imgDraw_ = Mat::zeros(camWidth_, camHeight_, CV_8UC3);
             
             eye >> img_;
+            flip(img_, img_, 1);
             
+            float delta_time = timer.duration_sec();
             if (!img_.empty()) {
                 tracker.track(img_);
                 detect.detect(tracker);
@@ -81,27 +96,73 @@ public:
                 detect.draw(img_);
                 imshow("preview", img_);
                 
-                judgeDraw_ = detect.drawJudging();
-                
+                const float START_POSE_VELO_THRE = 20.f;
+                const float START_POSE_TIME = 2.f;
+                if(state == WAITING) {
+                    cout << "WAITING" <<endl;
+                    float v = detect.getVelo();
+                    cout << "v=" << v << endl;
+                    cout << "t=" << time<<endl;
+                    
+                    if(v < START_POSE_VELO_THRE) {
+                        time += delta_time;
+                    }
+                    
+                    if(time > START_POSE_TIME) {
+                        state = START_DRAWING;
+                        time = 0;
+                        detect.clearMotion();
+                    }
+                }else if(state == START_DRAWING) {
+                    cout << "WAIT TO START DRAWing" <<endl;
+
+                    float v = detect.getVelo();
+
+                    if(v > START_POSE_VELO_THRE) {
+                        state = DRAWING;
+                    }
+                    
+                }else if(state == DRAWING) {
+                    cout << "Drawing" <<endl;
+                    const float DRAW_STOP_VELO_THRE = 20.f;
+                    const float DRAW_STOP_TIME = 2.f;
+
+                    float v = detect.getVelo();
+                    cout << v << endl;
+                    if(v < DRAW_STOP_VELO_THRE) {
+                        time += delta_time;
+                    }
+                    if(time > DRAW_STOP_TIME) {
+                        state = FINISH;
+                        
+                        imgDraw_ = Mat::zeros(camHeight_, camWidth_,  CV_8UC3);
+
+                        detect.draw(imgDraw_);
+                        detect.clearMotion();
+                    }
+                }else {
+                    //judgeDraw_ = detect.drawJudging();
+                    dtcShape_ = detect.matching(imgDraw_);
+                    
+                    if (dtcShape_ == 1) {
+                        cout << "Circle" << endl;
+                    }else if (dtcShape_ == 2) {
+                        cout << "Triangle" << endl;
+                    }else if (dtcShape_ == 3) {
+                        cout << "Square" << endl;
+                    }
+                    state = WAITING;
+                    time = 0;
+                    imshow("mot", imgDraw_);
+                    waitKey();
+                }
                 /*
                  if (judgeDraw_) {
                  detect.draw(imgDraw_);
                  }
                  */
                 
-                dtcShape_ = detect.matching(img_);
-                
-                if (dtcShape_ == 1) {
-                    cout << "Circle" << endl;
-                    break;
-                }else if (dtcShape_ == 2) {
-                    cout << "Triangle" << endl;
-                    break;
-                }else if (dtcShape_ == 3) {
-                    cout << "Square" << endl;
-                    break;
-                }
-                
+
                 //imshow("draw", imgDraw_);
             }
             

@@ -23,7 +23,7 @@ class MotionDetect
 {
     std::vector<cv::Point2f> motion_;
     
-    float thre_ = 3;
+    float thre_ = 10;
     int i = 1;
     cv::Point2f prevPos_;
     
@@ -43,12 +43,16 @@ class MotionDetect
     
     cv::Mat imgLines_;
     cv::Mat grayCircle_, grayTriangle_, graySquare_;
-    cv::Mat imgCircle_;
+    
+/*    cv::Mat imgCircle_;
     cv::Mat imgTriangle_;
     cv::Mat imgSquare_;
+ */
+    std::vector<cv::Mat> shapes_;
     
     cv::Mat point_, imgPoint_;
     
+    float velo_;
 public:
     MotionDetect() {
         vmin_ = 1.0;    v_ = 0.0;   vmax_ = 0.0;
@@ -63,7 +67,7 @@ public:
     }
     
     void init(int winWidth_, int winHeight_) {
-        vmin_ = 1.0;    v_ = 0.0;   vmax_ = 0.0;
+        vmin_ = 10.0;    v_ = 0.0;   vmax_ = 0.0;
         distX_ = 0.0;   distY_ = 0.0;
         
         start1_ = std::chrono::system_clock::now();
@@ -72,13 +76,16 @@ public:
         match2Cir_ = 0.0;   match2Tri_ = 0.0;   match2Squa_ = 0.0;
         
         drawJudge_ = false;
-        
+
         imgLines_ = cv::Mat::zeros(winHeight_, winWidth_, CV_8UC3);
+         /*
         imgCircle_ = cv::Mat::zeros(winHeight_, winWidth_, CV_8UC3);
         imgTriangle_ = cv::Mat::zeros(winHeight_, winWidth_, CV_8UC3);
-        imgSquare_ = cv::Mat::zeros(winHeight_, winWidth_, CV_8UC3);
+        imgSquare_ = cv::Mat::zeros(winHeight_, winWidth_, CV_8UC3);*/
         point_ = cv::Mat::zeros(winHeight_, winWidth_, CV_8UC3);
         imgPoint_ = cv::Mat::zeros(winHeight_, winWidth_, CV_8UC3);
+        
+        makeTeacher(winWidth_, winHeight_);
     }
     
     void setThreshold(float t) { thre_ = t; }
@@ -87,19 +94,34 @@ public:
     {
         Point2f pos = tracker.pos();
         
-        if(norm(pos-prevPos_) > thre_) {
+        if((velo_ = norm(pos-prevPos_)) > thre_) {
             motion_.push_back(pos);
         }else {
-            motion_.clear();
+            //motion_.clear();
         }
         
         prevPos_ = pos;
         return true;
     }
     
-    void draw(cv::Mat img_) {
+    void clearMotion()
+    {
+        motion_.clear();
+    }
+    
+    vector<Point2f> getMotion()
+    {
+        return motion_;
+    }
+    
+    float getVelo()
+    {
+        return velo_;
+    }
+    
+    void draw(cv::Mat img) {
         for(int i=0; i<(int)motion_.size()-1; ++i) {
-            cv::line(img_, motion_[i], motion_[i+1], Scalar::all(255));
+            cv::line(img, motion_[i], motion_[i+1], Scalar::all(255));
         }
     }
     
@@ -157,7 +179,7 @@ public:
     int matching(cv::Mat drawImage_) {
         cvtColor(drawImage_, drawImage_, COLOR_RGB2GRAY);
         
-        match2Cir_ = matchShapes(drawImage_, grayCircle_, 1, 0);
+/*        match2Cir_ = matchShapes(drawImage_, grayCircle_, 1, 0);
         match2Tri_ = matchShapes(drawImage_, grayTriangle_, 1, 0);
         match2Squa_ = matchShapes(drawImage_, graySquare_, 1, 0);
         
@@ -167,26 +189,47 @@ public:
             return 2;
         }else if (match2Squa_ < match2Cir_ && match2Squa_ < match2Tri_) {
             return 3;
+        }*/
+        
+        double min_dist = DBL_MAX;
+        int ishape=0;
+        int i=0;
+        for(auto& s : shapes_) {
+            double dist = matchShapes(drawImage_, s, 1, 0);
+            cout << dist <<  " ";
+            if(dist < min_dist) {
+                min_dist = dist;
+                
+                ishape = i+1;
+            }
+            i++;
         }
         
-        return 0;
+        return ishape;
     }
     
     void makeTeacher(int width_, int height_) {
-        circle(imgCircle_, Point(width_/2,height_/2), 200, Scalar::all(255));
+        Mat im = Mat(Size(width_, height_), CV_8U, Scalar(0));
+        circle(im, Point(width_/2,height_/2), 200, Scalar::all(255));
+        shapes_.push_back(im);
         
         cv::Point pt[3];
-        pt[0] = cv::Point(320,100);  pt[1] = cv::Point(100,380);  pt[2] = cv::Point(540,380);
+        pt[0] = cv::Point(width_,height_);  pt[1] = cv::Point(100,380);  pt[2] = cv::Point(540,380);
         
-        line(imgTriangle_, pt[0], pt[1], Scalar::all(255));
-        line(imgTriangle_, pt[1], pt[2], Scalar::all(255));
-        line(imgTriangle_, pt[2], pt[0], Scalar::all(255));
+        im = Mat(Size(width_, height_), CV_8U, Scalar(0));
+        line(im, pt[0], pt[1], Scalar::all(255));
+        line(im, pt[1], pt[2], Scalar::all(255));
+        line(im, pt[2], pt[0], Scalar::all(255));
+        shapes_.push_back(im);
         
-        rectangle(imgSquare_, Point(100,100), Point(540,380), Scalar::all(255));
         
-        cvtColor(imgCircle_, grayCircle_, COLOR_RGB2GRAY);
-        cvtColor(imgTriangle_, grayTriangle_, COLOR_RGB2GRAY);
-        cvtColor(imgSquare_, graySquare_, COLOR_RGB2GRAY);
+        im = Mat(Size(width_, height_), CV_8U, Scalar(0));
+        rectangle(im, Point(100,100), Point(540,380), Scalar::all(255));
+        shapes_.push_back(im);
+        
+      //  for(auto& m : shapes_) {
+       //     cvtColor(m,m,COLOR_RGB2GRAY);
+       // }
     }
     
     /*

@@ -35,7 +35,7 @@ public:
         
         cout << "please press key" << endl;
         
-        getchar();
+       // getchar();
         
         cv::VideoCapture cap(0);
         if (!cap.isOpened())

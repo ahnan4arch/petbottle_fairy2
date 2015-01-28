@@ -21,13 +21,14 @@ void Controller::update(){
     
     
     if (state_==OBJECT_DETECT) {
-        
+        state_ = MOTION_DETECT;
+        /*
         if(objDetector_->detectObject()){
             
             state_ = MOTION_DETECT;
             motDetector_->setTexture(objDetector_->getTexture());
             motDetector_->setMoment(objDetector_->getPosition());
-        }
+        }*/
         
     }else if (state_==MOTION_DETECT){
         
@@ -52,5 +53,6 @@ void Controller::init(ObjDetect *object,MotionDetector *motion, Fairy *fairy) {
     motDetector_ = motion;
     fairy_ = fairy;
     
+    motDetector_->init();
     objDetector_ ->getBackImg();
 }

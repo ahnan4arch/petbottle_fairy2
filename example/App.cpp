@@ -127,7 +127,7 @@ void App::init()
     RGE::getInstance()->init();
     
     RgeReader reader;
-    reader.read("sampleModels/youseimodel4.rge");
+    reader.read("rge/sampleModels/youseimodel4.rge");
     
     if(RGE::getInstance()->findFrame("Armature"))
         RGE::getInstance()->findFrame("Armature")->setBonesVisibility(false);
@@ -153,7 +153,7 @@ void App::init()
     
     //テクスチャ
     liveTexture_ = TextureRef(new ImageTexture);
-    liveTexture_->createFromFile("sampleModels/pet.jpg");
+    liveTexture_->createFromFile("rge/sampleModels/pet.jpg");
     RGE::getInstance()->findMaterial("dress1")->setTexture(liveTexture_);
     
     //video.open(0);
