@@ -451,6 +451,8 @@ namespace rge {
 		string getActionsDump( bool bApplyChildren = true);
 		
         void changeActionTo(FrameRef targetFrame, float changing_time = 1.0f);
+        
+        rgeVector2 getScreenPos() { return mScreenPos; }
 	private:
 		virtual void renderMe() {}
 		void doTransform();
@@ -502,6 +504,8 @@ namespace rge {
         float mActionBlendFactor = 0;
         float mActionBlendFactorDelta = 0;
         FrameRef mActionTargetFrame;
+        
+        rgeVector2 mScreenPos;
 	protected:
 		BoneRefs mBones;
 

@@ -16,7 +16,7 @@
 #include "OpenGLTexture.h"
 #include "Controller.h"
 #include "fairy.h"
-
+#include "objDetect.h"
 
 class App
 {
@@ -24,6 +24,8 @@ class App
     rge::TextureRef liveTexture_;
     int selectedTexture_ = 0;
     float poseRatio_ = 0;
+    
+    float prevZ_;
 public:
     App();
     void init();
@@ -43,7 +45,7 @@ private:
     Fairy fairy_;
     Controller controller_;
     MotionDetector motDetector_;
-    ObjDetect objDetector_;
+    ObjectDetector objDetector_;
     //void readTextures();
     
     //PSEyeCapture capture_;

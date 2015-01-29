@@ -7,6 +7,7 @@
 //
 
 #include "Controller.h"
+#include "Sound.h"
 
 std::vector<rge::rgeVector3> convertRGEfloatToCVPointf(std::vector<cv::Point3f> cvp){
     vector<rge::rgeVector3> result;
@@ -20,24 +21,33 @@ std::vector<rge::rgeVector3> convertRGEfloatToCVPointf(std::vector<cv::Point3f> 
 void Controller::update(){
 
     if (state_==OBJECT_DETECT) {
-        waitKey(1000);
+        objDetector_->update();
+        
+        if(objDetector_->isFound()) {
+           // motDetector_->setTexture(objDetector_->getTexture());
+           // motDetector_->setMoment(objDetector_->getCenterX());
+            state_ = MOTION_DETECT;
+        }
+       /* waitKey(1000);
         if(objDetector_->detectObject()){
             objDetector_->makeTexture();
-            state_ = MOTION_DETECT;
             motDetector_->setTexture(objDetector_->getTexture());
             motDetector_->setMoment(objDetector_->getCenterX());
         }
-        
+        */
+        //state_ = MOTION_DETECT;
     }else if (state_==MOTION_DETECT){
         
         if(motDetector_->MotionDetecting()){
-            fairy_->setTrack(convertRGEfloatToCVPointf(motDetector_->getTrack()));
+            play_appear();
             fairy_->setTexture(objDetector_->getTexture());
+            fairy_->setTrack(convertRGEfloatToCVPointf(motDetector_->getTrack()));
             state_ = ANIMATION;
         }
     }else{ //state_ == ANIMATION
-        waitKey(50);
+        waitKey(100);
         if(!fairy_->isVisible()){
+            play_disappear();
             motDetector_->init();
             state_= MOTION_DETECT;
         }
@@ -50,11 +60,12 @@ void Controller::draw(){
     return;
 }
 
-void Controller::init(ObjDetect *object,MotionDetector *motion, Fairy *fairy) {
+void Controller::init(ObjectDetector *object,MotionDetector *motion, Fairy *fairy) {
     objDetector_ = object;
     motDetector_ = motion;
     fairy_ = fairy;
     
     motDetector_->init();
-    objDetector_ ->getBackImg();
+    objDetector_->init();
+    audio_init();
 }

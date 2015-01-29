@@ -48,6 +48,7 @@
 		04DB47BB19FFA887006ED84B /* tag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04DB47A019FFA887006ED84B /* tag.cpp */; };
 		04DB47C119FFB8AF006ED84B /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04DB47BF19FFB8AF006ED84B /* App.cpp */; };
 		3B3867751A78DAEF00859DA3 /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B3867731A78DAEF00859DA3 /* Controller.cpp */; };
+		3BB3844B1A7A5F26009B9DAE /* Sound.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3BB3844A1A7A5F26009B9DAE /* Sound.mm */; };
 		3BFB005B1A791BFE00883430 /* psmove.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B38676B1A78DA9E00859DA3 /* psmove.c */; };
 		3BFB005C1A791C8D00883430 /* psmove_osxsupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B38676A1A78DA9E00859DA3 /* psmove_osxsupport.m */; };
 		3BFB005D1A791C9800883430 /* moved_client.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B3867621A78DA9E00859DA3 /* moved_client.c */; };
@@ -193,12 +194,14 @@
 		3B3867741A78DAEF00859DA3 /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Controller.h; sourceTree = "<group>"; };
 		3B3868121A78DBD700859DA3 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		3B3868131A78DBD700859DA3 /* objDetect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objDetect.h; sourceTree = "<group>"; };
+		3BB384481A7A2D73009B9DAE /* OpenGLTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OpenGLTexture.h; path = ../example/OpenGLTexture.h; sourceTree = "<group>"; };
+		3BB384491A7A5F26009B9DAE /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sound.h; path = ../../../../Downloads/rge1.04/rge/Sound.h; sourceTree = "<group>"; };
+		3BB3844A1A7A5F26009B9DAE /* Sound.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Sound.mm; path = ../../../../Downloads/rge1.04/rge/Sound.mm; sourceTree = "<group>"; };
 		3BFB00611A791CD800883430 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		3BFB00651A79213400883430 /* fairy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fairy.h; sourceTree = SOURCE_ROOT; };
 		6A8BF1921A79DCF60031A8C5 /* libopencv_imgproc.3.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.3.0.0.dylib; path = "../../../../../Downloads/opencv-3.0.0-alpha/release/lib/libopencv_imgproc.3.0.0.dylib"; sourceTree = "<group>"; };
 		6A8BF1941A79DD250031A8C5 /* libopencv_highgui.3.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.3.0.0.dylib; path = "../../../../../Downloads/opencv-3.0.0-alpha/release/lib/libopencv_highgui.3.0.0.dylib"; sourceTree = "<group>"; };
 		6A8BF1961A79DD580031A8C5 /* libopencv_core.3.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.3.0.0.dylib; path = "../../../../../Downloads/opencv-3.0.0-alpha/release/lib/libopencv_core.3.0.0.dylib"; sourceTree = "<group>"; };
-		6AC8CBDA1A7A00EC00392D9B /* OpenGLTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OpenGLTexture.h; path = ../../../../../../OpenGLTexture.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -225,7 +228,6 @@
 				04DB47BF19FFB8AF006ED84B /* App.cpp */,
 				04AED59419FF8BD9005B14CD /* trackball.cpp */,
 				04AED58F19FF8A92005B14CD /* anim_test.cpp */,
-				6AC8CBDA1A7A00EC00392D9B /* OpenGLTexture.h */,
 			);
 			name = example;
 			path = rge_sample;
@@ -344,6 +346,9 @@
 		04F1DD3119F64818006C6E69 = {
 			isa = PBXGroup;
 			children = (
+				3BB384491A7A5F26009B9DAE /* Sound.h */,
+				3BB3844A1A7A5F26009B9DAE /* Sound.mm */,
+				3BB384481A7A2D73009B9DAE /* OpenGLTexture.h */,
 				04AED60C19FF950B005B14CD /* OpenGL.framework */,
 				3BFB00611A791CD800883430 /* Cocoa.framework */,
 				6A8BF1981A79DD8D0031A8C5 /* Libraries */,
@@ -560,6 +565,7 @@
 				04DB47B319FFA887006ED84B /* regex.cpp in Sources */,
 				04DB47B919FFA887006ED84B /* singledocparser.cpp in Sources */,
 				04DB47B019FFA887006ED84B /* null.cpp in Sources */,
+				3BB3844B1A7A5F26009B9DAE /* Sound.mm in Sources */,
 				04AED5A519FF8D22005B14CD /* Frame.cpp in Sources */,
 				04DB47AB19FFA887006ED84B /* exp.cpp in Sources */,
 				3BFB005E1A791C9B00883430 /* moved_monitor.c in Sources */,
@@ -688,6 +694,7 @@
 					"-lopencv_videoio",
 					"-lhidapi",
 					"-lusb-1.0",
+					"-lopencv_imgcodecs",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/.. $(PROJECT_DIR)/../yaml-cpp/include";
@@ -715,6 +722,7 @@
 					"-lopencv_videoio",
 					"-lhidapi",
 					"-lusb-1.0",
+					"-lopencv_imgcodecs",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/.. $(PROJECT_DIR)/../yaml-cpp/include";

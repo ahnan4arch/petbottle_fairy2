@@ -19,7 +19,7 @@ public:
     Controller(){state_ = OBJECT_DETECT;}
     void update();
     void draw();
-    void init(ObjDetect *object,MotionDetector *motion,Fairy *fairy); //初期化
+    void init(ObjectDetector *object,MotionDetector *motion,Fairy *fairy); //初期化
     
 private:
     
@@ -30,7 +30,7 @@ private:
     };
     
     STATE state_;
-    ObjDetect *objDetector_;
+    ObjectDetector *objDetector_;
     MotionDetector *motDetector_;
     Fairy *fairy_;
     

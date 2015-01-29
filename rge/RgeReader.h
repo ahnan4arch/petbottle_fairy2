@@ -283,173 +283,112 @@ namespace rge {
 				s >> uv;
 		}
 		
+        
+        template <class T>
+        void split(const string& items, std::vector<T>& array)
+        {
+            stringstream str(items);
+            while(true) {
+                T v;
+                str >> v;
+                if(!str)
+                    break;
+                
+                array.push_back(v);
+            }
+        }
+        
 		void readMesh(const YAML::Node& node) {
 			typedef std::map<string, int> str2int;
 			
-			string name, mat, items;
+			string name;
 			rgeVector3 v, n;
 			
 			TriMeshObjectRef m = newTriMeshObject();
 			
 			node["Name"] >> name; 
 			m->setId(name);
-			
-			const YAML::Node& verts = node["Positions"];
-			
-			if(verts.size() == 0) { // is this short format?
-				verts >> items;
-				
-				stringstream s(items);
-				
-				while(true) {
-					s >> v.x >> v.y >> v.z;
-					if(!s)
-						break;
-					
-					m->addPosition(v);
-				}
-				
-			}else {
-				for(size_t i=0; i<verts.size(); ++i) {
-					verts[i] >> v;
-					m->addPosition(v);
-				}
-			}
-			
-			str2int mat2imesh;
-			const YAML::Node& faces = node["Faces"];
-			
-			//	faces
-			if(faces.size() == 0) { // is this short form?
-				faces >> items;
-				
-				stringstream s(items);
-				string types;
-				
-				s >> types;
-				
-				TriMeshObject::SOURCE_TYPE source;
-				
-				source = (TriMeshObject::TYPE_POSITION)*( types.find("v") != string::npos)
-				|(TriMeshObject::TYPE_NORMAL  )*( types.find("n") != string::npos)
-				|(TriMeshObject::TYPE_COLOR   )*( types.find("c") != string::npos)
-				|(TriMeshObject::TYPE_TEXCOORD)*( types.find("u") != string::npos);
-				m->setSourceType(source);
-				
-				while(true) {
-					string mat;
-					int nverts;
-					int i1,i2,i3,i4;
-					rgeVector3 n1,n2,n3,n4;
-					color3 c1,c2,c3,c4;
-					rgeVector2 u1,u2,u3,u4;
-					
-					s >> mat;
-					
-					if(!s)
-						break;
-					
-					str2int::iterator imi;
-					int imesh;
-					if((imi = mat2imesh.find(mat)) == mat2imesh.end()) {
-						imesh = m->makeTriangleMesh(mat);
-						mat2imesh.insert(str2int::value_type(mat, imesh));
-					}else{
-						imesh = imi->second; 
-					}				
-					
-					s >> nverts;
-					
-					if(nverts == 3) {
-						
-						readVertex(s, source, i1, n1, c1, u1);
-						readVertex(s, source, i2, n2, c2, u2);
-						readVertex(s, source, i3, n3, c3, u3);
-						
-						m->addTriangle(imesh,
-									   i1,n1,c1,u1,
-									   i2,n2,c2,u2,
-									   i3,n3,c3,u3);
-					}else{
-						
-						readVertex(s, source, i1, n1, c1, u1);
-						readVertex(s, source, i2, n2, c2, u2);
-						readVertex(s, source, i3, n3, c3, u3);
-						readVertex(s, source, i4, n4, c4, u4);
-						
-						m->addQuad(imesh,
-								   i1,n1,c1,u1,
-								   i2,n2,c2,u2,
-								   i3,n3,c3,u3,
-								   i4,n4,c4,u4);
-					}				
-				}
-			}else{
-				
-				TriMeshObject::SOURCE_TYPE source = TriMeshObject::TYPE_POSITION | TriMeshObject::TYPE_NORMAL;
-				if(faces.size() > 0) {
-					source |= faces[0]["V"][0].FindValue("c") ? TriMeshObject::TYPE_COLOR : 0;
-					source |= faces[0]["V"][0].FindValue("u") ? TriMeshObject::TYPE_TEXCOORD : 0;
-				}
-				m->setSourceType(source);
-				
-				for(size_t i=0; i<faces.size(); ++i) {
-					const YAML::Node& face = faces[i];
-					
-					face["Mat"] >> mat;
-					const YAML::Node* nor = face.FindValue("Normal");
-					if(nor) {
-						(*nor) >> n;
-					}
-					
-					str2int::iterator imi;
-					int imesh;
-					if((imi = mat2imesh.find(mat)) == mat2imesh.end()) {
-						imesh = m->makeTriangleMesh(mat);
-						mat2imesh.insert(str2int::value_type(mat, imesh));
-					}else{
-						imesh = imi->second; 
-					}
-					
-					const YAML::Node& vertices = face["V"];
-					
-					int i1,i2,i3,i4;
-					rgeVector3 n1,n2,n3,n4;
-					color3 c1,c2,c3,c4;
-					rgeVector2 u1,u2,u3,u4;
-					
-					source &= TriMeshObject::TYPE_ALL - TriMeshObject::TYPE_NORMAL;
-					source |= nor ? 0 : TriMeshObject::TYPE_NORMAL;
-					
-					if(nor) {
-						n1=n2=n3=n4= n;
-					}
-					if(vertices.size() == 3) {
-						
-						readVertex(vertices[0], source, i1, n1, c1, u1);
-						readVertex(vertices[1], source, i2, n2, c2, u2);
-						readVertex(vertices[2], source, i3, n3, c3, u3);
-						
-						m->addTriangle(imesh,
-									   i1,n1,c1,u1,
-									   i2,n2,c2,u2,
-									   i3,n3,c3,u3);
-					}else{
-						
-						readVertex(vertices[0], source, i1, n1, c1, u1);
-						readVertex(vertices[1], source, i2, n2, c2, u2);
-						readVertex(vertices[2], source, i3, n3, c3, u3);
-						readVertex(vertices[3], source, i4, n4, c4, u4);
-						
-						m->addQuad(imesh,
-								   i1,n1,c1,u1,
-								   i2,n2,c2,u2,
-								   i3,n3,c3,u3,
-								   i4,n4,c4,u4);
-					}
-				}
-			}
-			m->resolveMaterials();
+
+            string items;
+            if(node.FindValue("Mats")) {
+                node["Mats"] >> items;
+            }else {
+                items = "__nomat";
+            }
+            
+            strings mats;
+            split(items, mats);
+            
+			node["Pos"] >> items;
+            rgeVector3s poss;
+            split(items, poss);
+            for(auto& p : poss) {
+                m->addPosition(p);
+            }
+
+            node["Nor"] >> items;
+            rgeVector3s nors;
+            split(items, nors);
+
+
+            node["Tri"] >> items;
+            stringstream ss(items);
+            
+            string types;
+            ss >> types;
+            
+            TriMeshObject::SOURCE_TYPE source;
+            source = (TriMeshObject::TYPE_POSITION)*( types.find("p") != string::npos)
+                |(TriMeshObject::TYPE_TEXCOORD)*( types.find("u") != string::npos)
+                |(TriMeshObject::TYPE_COLOR   )*( types.find("c") != string::npos);
+            source |= TriMeshObject::TYPE_NORMAL;
+            m->setSourceType(source);
+            
+//            bool smooth_flag = types.find("s") != string::npos;
+
+            vector<int> mesh_indices;
+            for(auto mat : mats) {
+                mesh_indices.push_back(m->makeTriangleMesh(mat));
+            }
+            
+            while(1) {
+                int i1,i2,i3;
+                ss >> i1 >> i2 >> i3;
+                
+                if(!ss)
+                    break;
+                
+                int mi;
+                ss >> mi;
+  
+                bool smooth;
+                ss >> smooth;
+                
+                rgeVector2 uv1, uv2, uv3;
+                if(source & TriMeshObject::TYPE_TEXCOORD) {
+                    ss >> uv1 >> uv2 >> uv3;
+                }
+                
+                color3 c1, c2, c3;
+                if(source & TriMeshObject::TYPE_COLOR) {
+                    ss >> c1 >> c2 >> c3;
+                }
+                
+                if(!smooth) {
+                    m->addTriangle(mesh_indices[mi],
+                                   i1,nors[i1],c1,uv1,
+                                   i2,nors[i2],c2,uv2,
+                                   i3,nors[i3],c3,uv3);
+                }else {
+                    rgeVector3 nor = -m->calcNormal(i1,i2,i3);
+                    m->addTriangle(mesh_indices[mi],
+                                   i1,nor,c1,uv1,
+                                   i2,nor,c2,uv2,
+                                   i3,nor,c3,uv3);
+                }
+            }
+            
+            m->resolveMaterials();
 			mRge->registerMesh(m);
 			
 			mRge->logger() << "Mesh: " << name << "\n";

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <opencv2/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
@@ -6,9 +8,11 @@
 #include <vector>
 #include <stdio.h>
 
+#include "pseye/Labeling.h"
+
 using namespace std;
 using namespace cv;
-
+/*
 class ObjDetect{
     
     cv::Mat backImg;
@@ -141,5 +145,183 @@ public:
     }
     
     
+    
+};
+*/
+
+
+
+class ObjectDetector
+{
+    VideoCapture* video_;
+    
+    Mat bgAccum;
+    Mat backgournd;
+    Mat foreground;
+    Mat objImage;
+    int count = 0;
+    
+    cv::Rect objRect_;
+    
+    bool found = false;
+    enum {
+        GET_BG,
+        FIND_OBJ,
+        OBJ_FOUND
+    } state = GET_BG;
+public:
+    ObjectDetector() {}
+    
+    void setCapture(cv::VideoCapture* vc)
+    {
+        video_ = vc;
+    }
+    
+    void init()
+    {
+        bgAccum = Mat(Size(640, 480), CV_32FC3, Scalar::all(0));
+        count = 0;
+    }
+    
+    void update()
+    {
+        if(state == GET_BG) {
+            calcBackground();
+        }else {
+            found = findObject();
+        }
+    }
+    
+    bool isFound() { return found; }
+    
+    cv::Rect getObjectRect() { return objRect_; }
+    
+    cv::Mat getTexture()
+    {
+        if(!objImage.empty())
+            return objImage(objRect_).clone();
+        else
+            return Mat();
+    }
+    
+    cv::Mat getBackground() { return backgournd; }
+    cv::Mat getForeground() { return foreground; } 
+private:
+    
+    void calcBackground()
+    {
+        cout << "Capturing background..." << endl;
+        Mat bgr;
+        *video_ >> bgr;
+        
+        Mat fbgr;
+        bgr.convertTo(fbgr, CV_32FC3);
+        
+        bgAccum += fbgr;
+        count ++;
+        
+        const int BG_COUNT = 10;
+        if(count > BG_COUNT) {
+            bgAccum *= 1.f/count;
+            
+            bgAccum.convertTo(backgournd, CV_8UC3);
+            
+            imshow("bg", backgournd);
+            state = FIND_OBJ;
+            
+            cout << "Finding object." << endl;
+            
+            count = 0;
+        }
+    }
+    
+    bool findObject()
+    {
+        Mat bgr;
+        *video_ >> bgr;
+        
+        Mat diff;
+        cv::absdiff(backgournd, bgr, diff);
+        
+        cvtColor(diff, diff, COLOR_BGR2GRAY);
+        
+        erode(diff, diff, Mat());
+        erode(diff, diff, Mat());
+        erode(diff, diff, Mat());
+        dilate(diff, diff, Mat());
+        dilate(diff, diff, Mat());
+        dilate(diff, diff, Mat());
+        
+        Mat obj;
+        cv::threshold(diff, obj, 50, 255, THRESH_BINARY);
+        
+        typedef Labeling<uchar, uchar> Labeling8U;
+        Labeling8U labeling;
+        
+        cv::Mat labeled(obj.size(), CV_8U);
+        labeling.Exec(obj.ptr(), labeled.ptr(), obj.size().width, obj.size().height, true, 10);
+        
+        if(labeling.GetNumOfResultRegions() > 0)
+        {
+            Labeling8U::RegionInfo* ri = labeling.GetResultRegionInfo(0);
+            
+            //ri->GetCenter(pos_.x, pos_.y);
+            
+            Rect r;
+            int mx,my,sx,sy;
+            ri->GetMin(mx, my);
+            ri->GetSize(sx, sy);
+            
+            r.x = mx;
+            r.y = my;
+            r.width = sx;
+            r.height = sy;
+            
+            objRect_ = r;
+            
+            const int OBJ_FIND_COUNT = 50;
+            if(ri->GetNumOfPixels() > 200) {
+                
+                count ++;
+                if(count > OBJ_FIND_COUNT) {
+                
+                    objImage = bgr.clone();
+                    
+                    Mat fore(backgournd.size(), CV_8UC4, Scalar::all(0));
+                    
+                    for(int i=0; i<fore.size().area(); ++i) {
+                        Vec3b c = objImage.at<Vec3b>(i);
+                        uchar a = obj.at<uchar>(i) < 255 ? 0 : 255;
+                        
+                        fore.at<Vec4b>(i) = Vec4b(c[2],c[1],c[0],a);
+                    }
+                    foreground = fore;
+                    
+                    cvtColor(bgr, backgournd, COLOR_BGR2RGB);
+//                    backgournd = bgr.clone();
+                    
+                    state = OBJ_FOUND;
+                    
+                    /*CV_EXPORTS_W void rectangle(InputOutputArray img, Point pt1, Point pt2,
+                     const Scalar& color, int thickness = 1,
+                     int lineType = LINE_8, int shift = 0);*/
+                    
+                    rectangle(bgr, Point(mx,my), Point(mx+sx,my+sy), Scalar(0,0,255));
+                    
+                    imshow("obj rect", bgr);
+                    
+                    cout << "Found" << endl;
+                    
+                    init();
+                    return true;
+                }
+            }
+        }
+        imshow("obj", obj);
+
+        return false;
+        
+        
+    }
     
 };

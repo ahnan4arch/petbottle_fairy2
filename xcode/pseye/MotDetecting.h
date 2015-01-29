@@ -33,6 +33,7 @@ class MotionDetector {
     bool judgeDraw_;
     vector<Point2f> tracking_;
     Mat text_;
+    Rect rect_;
     
     PSEyeCapture eye;
     PSMoveTracker tracker;
@@ -49,9 +50,8 @@ class MotionDetector {
     } state = WAITING;
 public:
     MotionDetector() {
-#if DO_PAIRING
+
         PSMoveTracker::pair();
-#endif
         
         eye.open(320*2,240*2);
         setupEye(eye);
@@ -172,21 +172,39 @@ public:
         return false;
     }
     
+    int sign(float f)
+    {
+        if(f<0)
+            return -1;
+        else
+            return 1;
+    }
+    
     std::vector<Point3f> getTrack() {
         std::vector<Point3f> track1_(tracking_.size());
         
+        float prev_z = 0;
         for (int i=0; i<tracking_.size(); i++) {
-            if (tracking_[i].x > camWidth_/2 - objectWid_/2 && tracking_[i].x < camWidth_/2 + objectWid_/2) {
-                if (tracking_[i].y < camHeight_/2) {
-                    track1_[i].x = -100.0;
-                    track1_[i].y = -100.0;
-                    track1_[i].z = 0.0;
+//            if (tracking_[i].x > camWidth_/2 - objectWid_/2 && tracking_[i].x < camWidth_/2 + objectWid_/2) {
+//                if (tracking_[i].y < camHeight_/2) {
+//                    track1_[i].x = -100.0;
+//                    track1_[i].y = -100.0;
+//                    track1_[i].z = 0.0;
+//                }
+//            }else{
+                track1_[i].x = tracking_[i].x - camWidth_/2;
+                track1_[i].y = tracking_[i].y - camHeight_/2;
+                track1_[i].z = ((float)camHeight_ / tracking_.size()) * (i+1)-camHeight_/2;
+            
+          /*  Point2f p(track1_[i].y, track1_[i].z);
+            
+            float z = track1_[i].z;
+            if(prev_z != 0 && sign(prev_z) != sign(z)) {
+                if(rect_.contains(p)) {
+                    break;
                 }
-            }else{
-                track1_[i].x = tracking_[i].x;
-                track1_[i].y = tracking_[i].y;
-                track1_[i].z = (objectHei_ / tracking_.size()) * (i+1);
-            }
+            }*/
+//            }
         }
         
         
@@ -210,8 +228,8 @@ public:
         objectHei_ = text_.rows;
     }
     
-    void setMoment(float cx_) {
-        objectMom_ = cx_;
+    void setRect(Rect rect) {
+        rect_ = rect;
     }
 };
 

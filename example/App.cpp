@@ -15,88 +15,17 @@ using namespace std;
 #include <math.h>
 #include "trackball.h"
 #include "rge/RgeReader.h"
+
+
 using namespace rge;
 
-#include "OpenGLTexture.h"
+//#include "OpenGLTexture.h"
 
 #include <opencv2/opencv.hpp>
 using namespace cv;
 
 static VideoCapture video;
 
-
-#if 0
-#include "glsl.h"
-class GlslMaterial : public Material
-{
-    GLuint vertShader;
-    GLuint fragShader;
-    GLuint gl2Program;
-public:
-    GlslMaterial() {
-    }
-    
-    virtual void create() {
-        /* シェーダプログラムのコンパイル／リンク結果を得る変数 */
-        GLint compiled, linked;
-        
-        /* GLSL の初期化 (windowsのみ必要　*/
-        if (glslInit()) exit(1);
-        
-        /* シェーダオブジェクトの作成 */
-        vertShader = glCreateShader(GL_VERTEX_SHADER);
-        fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-        
-        /* シェーダのソースプログラムの読み込み */
-        if (readShaderSource(vertShader, "simple.vert")) exit(1);
-        if (readShaderSource(fragShader, "simple.frag")) exit(1);
-        
-        /* バーテックスシェーダのソースプログラムのコンパイル */
-        glCompileShader(vertShader);
-        glGetShaderiv(vertShader, GL_COMPILE_STATUS, &compiled);
-        printShaderInfoLog(vertShader);
-        if (compiled == GL_FALSE) {
-            fprintf(stdout, "Compile error in vertex shader.\n");
-            exit(1);
-        }
-        
-        /* フラグメントシェーダのソースプログラムのコンパイル */
-        glCompileShader(fragShader);
-        glGetShaderiv(fragShader, GL_COMPILE_STATUS, &compiled);
-        printShaderInfoLog(fragShader);
-        if (compiled == GL_FALSE) {
-            fprintf(stdout, "Compile error in fragment shader.\n");
-            exit(1);
-        }
-        
-        /* プログラムオブジェクトの作成 */
-        gl2Program = glCreateProgram();
-        
-        /* シェーダオブジェクトのシェーダプログラムへの登録 */
-        glAttachShader(gl2Program, vertShader);
-        glAttachShader(gl2Program, fragShader);
-        
-        /* シェーダオブジェクトの削除 */
-        glDeleteShader(vertShader);
-        glDeleteShader(fragShader);
-        
-        
-        /* シェーダプログラムのリンク */
-        glLinkProgram(gl2Program);
-        glGetProgramiv(gl2Program, GL_LINK_STATUS, &linked);
-        printProgramInfoLog(gl2Program);
-        if (linked == GL_FALSE) {
-            fprintf(stdout, "Link error.\n");
-            exit(1);
-        }
-    }
-    
-    virtual void issue()
-    {
-        glUseProgram(gl2Program);
-    }
-};
-#endif
 
 App::App()
 {
@@ -124,11 +53,19 @@ void App::init()
     //背景クリア色
     glClearColor(0.0, 0.0, 1.0, 1.0);
 			 
+    video.open(1);
+    video.set(CAP_PROP_FRAME_WIDTH, 640);
+    video.set(CAP_PROP_FRAME_HEIGHT, 480);
+
+   // dummyData(0, 0, 0);
+    
+    objDetector_.setCapture(&video);
+    
     controller_.init(&objDetector_,&motDetector_,&fairy_);
     RGE::getInstance()->init();
     
     RgeReader reader;
-    reader.read("/Users/nagakuratakahiro/lecture/jikken/AR班/petbottle_fairy2/rge/sampleModels/youseimodel4.rge");
+    reader.read("rge/sampleModels/youseimodel4.rge");
     //reader.read("rge/sampleModels/youseimodel4.rge");
     
     if(RGE::getInstance()->findFrame("Armature"))
@@ -157,11 +94,7 @@ void App::init()
     liveTexture_ = TextureRef(new ImageTexture);
     liveTexture_->createFromFile("rge/sampleModels/pet.jpg");
     RGE::getInstance()->findMaterial("dress1")->setTexture(liveTexture_);
-    
-    //video.open(0);
-    
-
-    
+        
     
 //    dummyData(0,0,0);
     
@@ -186,34 +119,52 @@ void App::applyWindowSize(int w, int h)
     RGE::getInstance()->setAspectRatio((double)w/h);
 }
 
+
 void App::update()
 {
     RGE::getInstance()->update();
-    Mat img;
-    video >> img;
     
-    //imshow("video", img);
-    //waitKey(1);
+   // imshow("video", img);
+   // waitKey(1);
     
-    liveTexture_->updateImage(img.size().width, img.size().height, GL_BGR, img.ptr());
     //RGE::getInstance()->findMesh("Cylinder.000")->clearCache();
+    
     controller_.update();
     fairy_.update();
     
-    if(fairy_.isVisible()){
-        rgeVector3 position = fairy_.getPosition();
-        double direction = fairy_.getDirection();
-        robotbase->setTranslation((position/50)-vector3<float>(10,0,0)); //要調節
-        robotbase->setRotation(0,0,direction+90);
-    }
 
+}
+
+int sign(float f)
+{
+    return (f<0)?-1:1;
 }
 
 void App::display()
 {
+
     
    	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     
+    //Mat img;
+    //video >> img;
+
+    Mat tex = objDetector_.getTexture();
+    if(!tex.empty()) {
+        //tex = imread("rge/sampleModels/pet.jpg");
+        liveTexture_->updateImage(tex.size().width, tex.size().height, GL_BGR, tex.ptr());
+        imshow("tex", tex);
+    }
+
+    
+    Mat img = objDetector_.getBackground();
+    
+    if(!img.empty()) {
+        texture_.update(img, GL_RGB);//GL_BGR
+        texture_.drawBackground();
+    }
+
     /* モデルビュー変換行列の初期化 */
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -227,11 +178,42 @@ void App::display()
     if(RGE::getInstance()->findLight("Spot"))
         SpotLight::upcast(RGE::getInstance()->findLight("Spot"))->setCastShadow(true);
     
+    
+    rgeVector3 position;
+    if(fairy_.isVisible()){
+         position = fairy_.getPosition();
+        double direction = fairy_.getDirection();
+        //    robotbase->setTranslation((position)-vector3<float>(0,0,0)); //要調節
+        robotbase->setTranslation((position/50)-vector3<float>(0,0,0)); //要調節
+        robotbase->setRotation(0,0,direction+90);
+        
+        rgeVector2 scr_pos = robotbase->getScreenPos();
+//        cout << pos.x << "," << pos.y << endl;
+        
+        Rect rect = objDetector_.getObjectRect();
+        
+        if(prevZ_ != 0 && sign(prevZ_) != sign(position.y) &&
+           rect.contains(Point2f(scr_pos.x,scr_pos.y))) {
+         
+            fairy_.setVisible(false);
+        }
+        
+        prevZ_ = position.y;
+    }
+    else {
+        robotbase->setTranslation(rgeVector3(1000,1000,1000));
+        prevZ_ = 0;
+    }
+
     RGE::getInstance()->render();
+
     
+    img = objDetector_.getForeground();
     
-//    texture_.update(img, GL_RGB);//GL_BGR
-//    texture_.drawBackground();
+    if(!img.empty() && position.y > 0) {
+        texture_.updateRGBA(img);//GL_BGR
+        texture_.drawBackgroundWithAlpha();
+    }
 
 
 }
@@ -259,10 +241,10 @@ void App::dummyData(float x, float y ,float rot)
     int r;
     float z;
     
-    r = 4;     //円の半径
+    r = 300;     //円の半径
     std::vector<rge::rgeVector3> dummy_track;
     
-    for(int i=0; i<180;i++){
+    for(int i=0; i<1800;i++){
         radian = M_PI/180 * i;
         x = cos(radian) * r;
         y = sin(radian) * r;

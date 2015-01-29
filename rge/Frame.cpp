@@ -10,6 +10,8 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/mat4x4.hpp"
 
+#include <OpenGL/glu.h>
+
 #include "RGE.h"
 #include "Physics.h"
 #include "Frame.h"
@@ -488,6 +490,19 @@ void Frame::render() {
 	doTransform();
 	doExtraTransform();
 	
+    {
+        GLdouble model[16], proj[16];
+        GLint view[4];
+        
+        glGetDoublev(GL_MODELVIEW_MATRIX, model);
+        glGetDoublev(GL_PROJECTION_MATRIX, proj);
+        glGetIntegerv(GL_VIEWPORT, view);
+        double wx,wy,wz;
+        gluProject(0, 0, 0, model, proj, view, &wx, &wy, &wz);
+        
+        mScreenPos.x = wx;
+        mScreenPos.y = wy;
+    }
 	
 	for_each(mLocalIssue.begin(), mLocalIssue.end(), bind(&Issuable::issue, std::placeholders::_1));
 	if(getRGE()->getLayerVisibility(mLayer) )

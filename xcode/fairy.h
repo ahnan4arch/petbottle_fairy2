@@ -52,6 +52,8 @@ public:
         texture_ = texture;
     }
     
+    void setVisible(bool b) { visible_ = b; }
+    
     void update() {
         if (visible_){
             rge::rgeVector3 pos = track_[step_];
@@ -61,7 +63,7 @@ public:
             direction_ = atan2(next_point.y - pos.y, next_point.x - pos.x)/M_PI * 180;
             
             step_++;
-            pos.z = sin(M_PI/30 * step_);
+            pos.z = pos.z + sin(M_PI/30 * step_)*50;
             //妖精の位置にゆらぎを加えるsin波
             pos_ = pos;
         }

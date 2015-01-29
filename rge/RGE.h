@@ -129,7 +129,7 @@ namespace rge {
         void setRootFrame(FrameRef root); //!< rootフレームを設定
         rgeScalar update(rgeScalar delta = -1); //!< アニメーションや物理エンジンの時間をdelta秒 進める.　省略時は自動計測．戻り値は，計測された経過時間
         void setViewport(int x, int y, int width, int height);
-
+        void getViewport(int&x, int&y, int &w, int&h ) {x=mViewport[0];y=mViewport[1];w=mViewport[2];h=mViewport[3];}
         void render(); //!< シーンを完全に描画する
 
         void castShadaw(); //!< 影を描画する
