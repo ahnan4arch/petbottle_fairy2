@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		048A9F271A4CF709003E96F9 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 048A9F261A4CF709003E96F9 /* libopencv_core.dylib */; };
-		048A9F291A4CF715003E96F9 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 048A9F281A4CF715003E96F9 /* libopencv_highgui.dylib */; };
-		048A9F2B1A4CF724003E96F9 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 048A9F2A1A4CF724003E96F9 /* libopencv_imgproc.dylib */; };
 		048A9F411A4D0D46003E96F9 /* glsl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 048A9F3E1A4D0D46003E96F9 /* glsl.cpp */; };
 		04AED59019FF8A92005B14CD /* anim_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04AED58F19FF8A92005B14CD /* anim_test.cpp */; };
 		04AED59519FF8BD9005B14CD /* trackball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04AED59419FF8BD9005B14CD /* trackball.cpp */; };
@@ -60,6 +57,9 @@
 		3BFB00621A791CD800883430 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BFB00611A791CD800883430 /* Cocoa.framework */; };
 		3BFB00631A791D1D00883430 /* ps3eye.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B38675C1A78DA9E00859DA3 /* ps3eye.cpp */; };
 		3BFB00641A791D2000883430 /* ps3eyedriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B38675E1A78DA9E00859DA3 /* ps3eyedriver.cpp */; };
+		6A8BF1931A79DCF60031A8C5 /* libopencv_imgproc.3.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A8BF1921A79DCF60031A8C5 /* libopencv_imgproc.3.0.0.dylib */; };
+		6A8BF1951A79DD250031A8C5 /* libopencv_highgui.3.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A8BF1941A79DD250031A8C5 /* libopencv_highgui.3.0.0.dylib */; };
+		6A8BF1971A79DD580031A8C5 /* libopencv_core.3.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A8BF1961A79DD580031A8C5 /* libopencv_core.3.0.0.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -75,9 +75,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		048A9F261A4CF709003E96F9 /* libopencv_core.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.dylib; path = ../../../../../../usr/local/lib/libopencv_core.dylib; sourceTree = "<group>"; };
-		048A9F281A4CF715003E96F9 /* libopencv_highgui.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.dylib; path = ../../../../../../usr/local/lib/libopencv_highgui.dylib; sourceTree = "<group>"; };
-		048A9F2A1A4CF724003E96F9 /* libopencv_imgproc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.dylib; path = ../../../../../../usr/local/lib/libopencv_imgproc.dylib; sourceTree = "<group>"; };
 		048A9F3E1A4D0D46003E96F9 /* glsl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glsl.cpp; path = ../example/glsl.cpp; sourceTree = "<group>"; };
 		048A9F3F1A4D0D46003E96F9 /* glsl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glsl.h; path = ../example/glsl.h; sourceTree = "<group>"; };
 		048A9F481A4D0EFB003E96F9 /* simple.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = simple.frag; path = ../simple.frag; sourceTree = "<group>"; };
@@ -165,7 +162,6 @@
 		04DB47BF19FFB8AF006ED84B /* App.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = App.cpp; path = ../example/App.cpp; sourceTree = SOURCE_ROOT; };
 		04DB47C019FFB8AF006ED84B /* App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = App.h; path = ../example/App.h; sourceTree = "<group>"; };
 		04F1DD3A19F64818006C6E69 /* animation */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = animation; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B38674C1A78CCC800859DA3 /* OpenGLTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OpenGLTexture.h; path = ../../example/OpenGLTexture.h; sourceTree = "<group>"; };
 		3B3867531A78DA9E00859DA3 /* Labeling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Labeling.h; sourceTree = "<group>"; };
 		3B3867551A78DA9E00859DA3 /* MotDetecting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MotDetecting.h; sourceTree = "<group>"; };
 		3B3867561A78DA9E00859DA3 /* MotionDetector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MotionDetector.h; sourceTree = "<group>"; };
@@ -199,6 +195,10 @@
 		3B3868131A78DBD700859DA3 /* objDetect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objDetect.h; sourceTree = "<group>"; };
 		3BFB00611A791CD800883430 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		3BFB00651A79213400883430 /* fairy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fairy.h; sourceTree = SOURCE_ROOT; };
+		6A8BF1921A79DCF60031A8C5 /* libopencv_imgproc.3.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.3.0.0.dylib; path = "../../../../../Downloads/opencv-3.0.0-alpha/release/lib/libopencv_imgproc.3.0.0.dylib"; sourceTree = "<group>"; };
+		6A8BF1941A79DD250031A8C5 /* libopencv_highgui.3.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.3.0.0.dylib; path = "../../../../../Downloads/opencv-3.0.0-alpha/release/lib/libopencv_highgui.3.0.0.dylib"; sourceTree = "<group>"; };
+		6A8BF1961A79DD580031A8C5 /* libopencv_core.3.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.3.0.0.dylib; path = "../../../../../Downloads/opencv-3.0.0-alpha/release/lib/libopencv_core.3.0.0.dylib"; sourceTree = "<group>"; };
+		6AC8CBDA1A7A00EC00392D9B /* OpenGLTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OpenGLTexture.h; path = ../../../../../../OpenGLTexture.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -206,11 +206,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A8BF1971A79DD580031A8C5 /* libopencv_core.3.0.0.dylib in Frameworks */,
+				6A8BF1951A79DD250031A8C5 /* libopencv_highgui.3.0.0.dylib in Frameworks */,
+				6A8BF1931A79DCF60031A8C5 /* libopencv_imgproc.3.0.0.dylib in Frameworks */,
 				3BFB00621A791CD800883430 /* Cocoa.framework in Frameworks */,
-				048A9F271A4CF709003E96F9 /* libopencv_core.dylib in Frameworks */,
 				04AED60D19FF950B005B14CD /* OpenGL.framework in Frameworks */,
-				048A9F291A4CF715003E96F9 /* libopencv_highgui.dylib in Frameworks */,
-				048A9F2B1A4CF724003E96F9 /* libopencv_imgproc.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,7 +225,7 @@
 				04DB47BF19FFB8AF006ED84B /* App.cpp */,
 				04AED59419FF8BD9005B14CD /* trackball.cpp */,
 				04AED58F19FF8A92005B14CD /* anim_test.cpp */,
-				3B38674C1A78CCC800859DA3 /* OpenGLTexture.h */,
+				6AC8CBDA1A7A00EC00392D9B /* OpenGLTexture.h */,
 			);
 			name = example;
 			path = rge_sample;
@@ -344,16 +344,14 @@
 		04F1DD3119F64818006C6E69 = {
 			isa = PBXGroup;
 			children = (
+				04AED60C19FF950B005B14CD /* OpenGL.framework */,
 				3BFB00611A791CD800883430 /* Cocoa.framework */,
+				6A8BF1981A79DD8D0031A8C5 /* Libraries */,
 				3B3868111A78DB5E00859DA3 /* ObjDetect */,
 				3B3867511A78DA7400859DA3 /* Gesture */,
 				3B38674D1A78DA4400859DA3 /* Controller */,
 				048A9F421A4D0D76003E96F9 /* example */,
 				048A9F471A4D0DB7003E96F9 /* glsl */,
-				048A9F2A1A4CF724003E96F9 /* libopencv_imgproc.dylib */,
-				048A9F281A4CF715003E96F9 /* libopencv_highgui.dylib */,
-				048A9F261A4CF709003E96F9 /* libopencv_core.dylib */,
-				04AED60C19FF950B005B14CD /* OpenGL.framework */,
 				04AED5C019FF94D0005B14CD /* yaml-cpp */,
 				04AED59819FF8D0A005B14CD /* rge */,
 				04F1DD3B19F64818006C6E69 /* Products */,
@@ -458,6 +456,16 @@
 				3B3868131A78DBD700859DA3 /* objDetect.h */,
 			);
 			name = ObjDetect;
+			sourceTree = "<group>";
+		};
+		6A8BF1981A79DD8D0031A8C5 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				6A8BF1961A79DD580031A8C5 /* libopencv_core.3.0.0.dylib */,
+				6A8BF1941A79DD250031A8C5 /* libopencv_highgui.3.0.0.dylib */,
+				6A8BF1921A79DCF60031A8C5 /* libopencv_imgproc.3.0.0.dylib */,
+			);
+			name = Libraries;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -670,7 +678,10 @@
 					"$(PROJECT_DIR)/..",
 					"$(PROJECT_DIR)/../yaml-cpp/include",
 				);
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					"/Users/nagakuratakahiro/Downloads/opencv-3.0.0-alpha/release/lib",
+				);
 				OTHER_LDFLAGS = (
 					"-ljpeg",
 					"-lSDL2",
@@ -694,7 +705,10 @@
 					"$(PROJECT_DIR)/..",
 					"$(PROJECT_DIR)/../yaml-cpp/include",
 				);
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					"/Users/nagakuratakahiro/Downloads/opencv-3.0.0-alpha/release/lib",
+				);
 				OTHER_LDFLAGS = (
 					"-ljpeg",
 					"-lSDL2",

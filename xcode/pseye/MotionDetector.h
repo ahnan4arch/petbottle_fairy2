@@ -44,10 +44,11 @@ class MotionDetect
     cv::Mat imgLines_;
     cv::Mat grayCircle_, grayTriangle_, graySquare_;
     
-/*    cv::Mat imgCircle_;
+    /*
+    cv::Mat imgCircle_;
     cv::Mat imgTriangle_;
     cv::Mat imgSquare_;
- */
+    */
     std::vector<cv::Mat> shapes_;
     
     cv::Mat point_, imgPoint_;
@@ -125,6 +126,7 @@ public:
         }
     }
     
+    /*
     bool drawJudging() {
         if ((int)motion_.size() > 1) {
             distX_ = motion_[(int)motion_.size()-1].x - motion_[(int)motion_.size()-2].x;
@@ -175,11 +177,13 @@ public:
         
         return drawJudge_;
     }
+     */
     
     int matching(cv::Mat drawImage_) {
         cvtColor(drawImage_, drawImage_, COLOR_RGB2GRAY);
         
-/*        match2Cir_ = matchShapes(drawImage_, grayCircle_, 1, 0);
+        /*
+        match2Cir_ = matchShapes(drawImage_, grayCircle_, 1, 0);
         match2Tri_ = matchShapes(drawImage_, grayTriangle_, 1, 0);
         match2Squa_ = matchShapes(drawImage_, graySquare_, 1, 0);
         
@@ -189,7 +193,8 @@ public:
             return 2;
         }else if (match2Squa_ < match2Cir_ && match2Squa_ < match2Tri_) {
             return 3;
-        }*/
+        }
+         */
         
         double min_dist = DBL_MAX;
         int ishape=0;
@@ -227,9 +232,11 @@ public:
         rectangle(im, Point(100,100), Point(540,380), Scalar::all(255));
         shapes_.push_back(im);
         
-      //  for(auto& m : shapes_) {
-       //     cvtColor(m,m,COLOR_RGB2GRAY);
-       // }
+        /*
+        for(auto& m : shapes_) {
+            cvtColor(m,m,COLOR_RGB2GRAY);
+        }
+         */
     }
     
     /*
@@ -237,7 +244,7 @@ public:
      PSMove* move = PSMoveTracker::returnPsm();
      psmove_set_rumble(PSMoveTracker::returnPsm(), 2);
      }
-     */
+     */    
 };
 
 #endif

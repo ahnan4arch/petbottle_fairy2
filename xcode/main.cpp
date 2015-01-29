@@ -11,9 +11,11 @@ int main(int argc, char *argv[])
     detector.getBackImg();
     
     cout << "getBackImg completed" << endl;
-    cout << "please press key" << endl;
     
-    getchar();
+    waitKey(5000);
+    //cout << "please press key" << endl;
+    
+    //getchar();
     
     detector.detectObject();
 

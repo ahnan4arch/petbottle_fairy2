@@ -53,7 +53,7 @@ public:
     }
     
     void update() {
-        if (visible_ == true){
+        if (visible_){
             rge::rgeVector3 pos = track_[step_];
             
             rge::rgeVector3 next_point = track_[step_+1];

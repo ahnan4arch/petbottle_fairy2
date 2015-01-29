@@ -134,7 +134,7 @@ public:
         
     }
     
-    float getPosition(){
+    float getCenterX(){
         
         return cx;
         

@@ -1,4 +1,4 @@
-//
+ //
 //  Controler.cpp
 //  level7
 //
@@ -18,27 +18,29 @@ std::vector<rge::rgeVector3> convertRGEfloatToCVPointf(std::vector<cv::Point3f> 
 
 
 void Controller::update(){
-    
-    
+
     if (state_==OBJECT_DETECT) {
-        state_ = MOTION_DETECT;
-        /*
+        waitKey(1000);
         if(objDetector_->detectObject()){
-            
+            objDetector_->makeTexture();
             state_ = MOTION_DETECT;
             motDetector_->setTexture(objDetector_->getTexture());
-            motDetector_->setMoment(objDetector_->getPosition());
-        }*/
+            motDetector_->setMoment(objDetector_->getCenterX());
+        }
         
     }else if (state_==MOTION_DETECT){
         
         if(motDetector_->MotionDetecting()){
+            fairy_->setTrack(convertRGEfloatToCVPointf(motDetector_->getTrack()));
+            fairy_->setTexture(objDetector_->getTexture());
             state_ = ANIMATION;
         }
     }else{ //state_ == ANIMATION
-        fairy_->setTrack(convertRGEfloatToCVPointf(motDetector_->getTrack()));
-        fairy_->setTexture(objDetector_->getTexture());
-        
+        waitKey(50);
+        if(!fairy_->isVisible()){
+            motDetector_->init();
+            state_= MOTION_DETECT;
+        }
     }
     
 }

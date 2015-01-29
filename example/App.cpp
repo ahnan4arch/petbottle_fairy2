@@ -124,10 +124,12 @@ void App::init()
     //背景クリア色
     glClearColor(0.0, 0.0, 1.0, 1.0);
 			 
+    controller_.init(&objDetector_,&motDetector_,&fairy_);
     RGE::getInstance()->init();
     
     RgeReader reader;
-    reader.read("rge/sampleModels/youseimodel4.rge");
+    reader.read("/Users/nagakuratakahiro/lecture/jikken/AR班/petbottle_fairy2/rge/sampleModels/youseimodel4.rge");
+    //reader.read("rge/sampleModels/youseimodel4.rge");
     
     if(RGE::getInstance()->findFrame("Armature"))
         RGE::getInstance()->findFrame("Armature")->setBonesVisibility(false);
@@ -158,10 +160,10 @@ void App::init()
     
     //video.open(0);
     
-    controller_.init(&objDetector_,&motDetector_,&fairy_);
+
     
     
-    dummyData(0,0,0);
+//    dummyData(0,0,0);
     
 //    MaterialRef mat = MaterialRef(new GlslMaterial);
 //    mat->create();
@@ -177,7 +179,7 @@ void App::applyWindowSize(int w, int h)
     trackballRegion(w, h);
     
     /* ウィンドウ全体をビューポートにする */
-    //	glViewport(0, 0, w, h);
+    //	glViewport(0, 0, w, h);(
     RGE::getInstance()->setViewport(0, 0, w, h);
     
     //ウインドウのアスペクト比を設定
@@ -198,11 +200,12 @@ void App::update()
     controller_.update();
     fairy_.update();
     
-    rgeVector3 position = fairy_.getPosition();
-    double direction = fairy_.getDirection();
-    robotbase->setTranslation(position);
-    robotbase->setRotation(0,0,direction+180);
-    
+    if(fairy_.isVisible()){
+        rgeVector3 position = fairy_.getPosition();
+        double direction = fairy_.getDirection();
+        robotbase->setTranslation((position/50)-vector3<float>(10,0,0)); //要調節
+        robotbase->setRotation(0,0,direction+90);
+    }
 
 }
 
@@ -227,8 +230,8 @@ void App::display()
     RGE::getInstance()->render();
     
     
-    //texture_.update(img, GL_RGB);//GL_BGR
-    //texture_.drawBackground();
+//    texture_.update(img, GL_RGB);//GL_BGR
+//    texture_.drawBackground();
 
 
 }
@@ -270,9 +273,9 @@ void App::dummyData(float x, float y ,float rot)
     }
     
     fairy_.setTrack(dummy_track);
-    //妖精を動かす
-    //    robotbase->setTranslation(x,y,z);
-    //    robotbase->rotate(0,0,0);
+//    //妖精を動かす
+//        robotbase->setTranslation(x,y,z);
+//        robotbase->rotate(0,0,0);
     
     
 }

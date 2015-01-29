@@ -31,7 +31,7 @@ class MotionDetector {
     float objectMom_;
     int dtcShape_;
     bool judgeDraw_;
-    vector<Point3f> tracking_;
+    vector<Point2f> tracking_;
     Mat text_;
     
     PSEyeCapture eye;
@@ -69,6 +69,7 @@ public:
     void init()
     {
         detect.init(640, 480);
+        state = WAITING;
     }
     
     void setupEye(PSEyeCapture& eye)
@@ -138,30 +139,29 @@ public:
                         imgDraw_ = Mat::zeros(camHeight_, camWidth_,  CV_8UC3);
 
                         detect.draw(imgDraw_);
+                        tracking_ = detect.getMotion();
                         detect.clearMotion();
                     }
                 }else {
                     //judgeDraw_ = detect.drawJudging();
+                    
                     dtcShape_ = detect.matching(imgDraw_);
                     
                     if (dtcShape_ == 1) {
                         cout << "Circle" << endl;
+                        return true;
                     }else if (dtcShape_ == 2) {
                         cout << "Triangle" << endl;
+                        return true;
                     }else if (dtcShape_ == 3) {
                         cout << "Square" << endl;
+                        return true;
                     }
                     state = WAITING;
                     time = 0;
                     imshow("mot", imgDraw_);
-                    waitKey();
+                    waitKey(1);
                 }
-                /*
-                 if (judgeDraw_) {
-                 detect.draw(imgDraw_);
-                 }
-                 */
-                
 
                 //imshow("draw", imgDraw_);
             }
@@ -169,12 +169,10 @@ public:
             waitKey(1);
         }
         
-        return true;
+        return false;
     }
     
     std::vector<Point3f> getTrack() {
-        //cout << "track" << track_ << endl;
-        
         std::vector<Point3f> track1_(tracking_.size());
         
         for (int i=0; i<tracking_.size(); i++) {
@@ -191,18 +189,18 @@ public:
             }
         }
         
+        
         /*
          for (int i=0; i<track1_.size(); i++) {
          cv::circle(imgPoint_, Point(track1_[i].x, track1_[i].z), 3, Scalar::all(255), -1);
          imshow("Point", imgPoint_);
          waitKey(1);
          }
-         
-         cout << "track1_ = " << track1_ << endl;
-         cout << "track_ = " << track_ << endl;
          */
-        
+         
+         //cout << "track1_ = " << track1_ << endl;
         return track1_;
+//        return d_track;
     }
     
     void setTexture(Mat texture_) {
